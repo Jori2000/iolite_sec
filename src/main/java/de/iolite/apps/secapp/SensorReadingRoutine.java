@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import de.iolite.app.api.device.access.Device;
 
+/**
+ * @author Jori
+ *
+ */
 public class SensorReadingRoutine implements Runnable {
 
 	@Nonnull

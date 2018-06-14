@@ -143,23 +143,41 @@ public class SecApp extends AbstractIOLITEApp {
 		LOGGER.warn("Devices: " + this.deviceAPI.getDevices());
 
 		for (final Device device : this.deviceAPI.getDevices()) {
-			LOGGER.debug(device.getProfileIdentifier());
-			LOGGER.warn(device.getProfileIdentifier());
+			LOGGER.debug("checking if " + device.getProfileIdentifier() + " is relevant");
+			LOGGER.warn("checking if " + device.getProfileIdentifier() + " is relevant");
 
 			for (int i = 0; i < all.length; i++) {
+				LOGGER.warn("http://iolite.de#" + all[i] + " is compared to" + device.getProfileIdentifier());
 				if (device.getProfileIdentifier().equals("http://iolite.de#" + all[i])) {
+					LOGGER.warn("YES - " + trigger.length + " " + reaction.length);
+
 					allElements.add(device);
 					allCounter++;
-					for (int y = 0; i < trigger.length; y++) {
-						triggerCounter++;
-						triggerElements.add(device);
+					for (int y = 0; y < trigger.length; y++) {
+						LOGGER.warn("Went through: " + y);
+
+						if (device.getProfileIdentifier().equals("http://iolite.de#" + trigger[y])) {
+							LOGGER.warn("FOUND SOMETHING!!!");
+							triggerCounter++;
+							triggerElements.add(device);
+						}
 					}
-					for (int y = 0; i < reaction.length; y++) {
-						reactionCounter++;
-						reactionElements.add(device);
+					for (int y = 0; y < reaction.length; y++) {
+						if (device.getProfileIdentifier().equals("http://iolite.de#" + reaction[y])) {
+							LOGGER.warn("FOUND SOMETHING!!!");
+							reactionCounter++;
+							reactionElements.add(device);
+
+						}
+
 					}
+				} else {
+					LOGGER.warn("No");
+
 				}
 			}
+			LOGGER.warn("Out of loop -> ");
+
 		}
 		LOGGER.debug("Number of trigger elements: " + triggerCounter);
 		LOGGER.debug("Number of reaction elements: " + reactionCounter);
