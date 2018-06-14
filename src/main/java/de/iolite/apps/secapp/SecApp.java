@@ -1,9 +1,11 @@
-package de.iolite.apps.secapp.main;
+package de.iolite.apps.secapp;
 
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -14,10 +16,12 @@ import de.iolite.api.IOLITEAPINotResolvableException;
 import de.iolite.api.IOLITEAPIProvider;
 import de.iolite.api.IOLITEPermissionDeniedException;
 import de.iolite.app.AbstractIOLITEApp;
+import de.iolite.app.api.device.access.Device;
+import de.iolite.app.api.device.access.DeviceAPI;
 import de.iolite.app.api.frontend.FrontendAPI;
 import de.iolite.app.api.frontend.FrontendAPIException;
 import de.iolite.app.api.frontend.util.FrontendAPIUtility;
-import de.iolite.apps.example.internals.PageWithEmbeddedSessionTokenRequestHandler;
+import de.iolite.apps.secapp.internals.PageWithEmbeddedSessionTokenRequestHandler;
 import de.iolite.common.lifecycle.exception.CleanUpFailedException;
 import de.iolite.common.lifecycle.exception.InitializeFailedException;
 import de.iolite.common.lifecycle.exception.StartFailedException;
@@ -32,7 +36,9 @@ public class SecApp extends AbstractIOLITEApp {
 	@Nonnull
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecApp.class);
 	private FrontendAPI frontendAPI;
+	private DeviceAPI deviceAPI;
 	private Disposeable disposeableAssets;
+	private SensorReadingRoutine sensorReadingRoutine;
 
 	@Override
 	protected void cleanUpHook() throws CleanUpFailedException {
@@ -54,6 +60,12 @@ public class SecApp extends AbstractIOLITEApp {
 			// Frontend API enables the App to expose a user interface
 			this.frontendAPI = context.getAPI(FrontendAPI.class);
 			initializeWebResources();
+
+			// Device API gives access to devices connected to IOLITE
+			this.deviceAPI = context.getAPI(DeviceAPI.class);
+			initializeDevices();
+
+			startSensorReadingRoutine();
 		} catch (final IOLITEAPINotResolvableException e) {
 			throw new StartFailedException(
 					MessageFormat.format("Start failed due to required but not resolvable AppAPI: {0}", e.getMessage()),
@@ -110,6 +122,68 @@ public class SecApp extends AbstractIOLITEApp {
 		} catch (final IOException e) {
 			throw new InitializeFailedException("Loading templates for the dummy app failed", e);
 		}
+	}
+
+	private void initializeDevices() {
+		LOGGER.warn("Initializing devices");
+		String[] all = { "AlarmSiren", "AlarmSystem", "Blind", "Camera", "carbonDioxideSensor", "ContactSensor",
+				"DimmableLamp", "Door", "Doorbell", "HSVLamp", "Lamp", "LuminanceSensor", "MovementSensor", "Socket",
+				"Sunblind", "VibrationSensor", "MediaPlayerDevice", "TV" };
+		String[] trigger = { "AlarmSystem", "Camera", "carbonDioxideSensor", "ContactSensor", "Door", "LuminanceSensor",
+				"Doorbell", "MovementSensor", "VibrationSensor" };
+		String[] reaction = { "AlarmSiren", "Blind", "Camera", "DimmableLamp", "HSVLamp", "Lamp", "Socket", "Sunblind",
+				"MediaPlayerDevice", "TV" };
+		Set<Device> triggerElements = new HashSet<Device>();
+		Set<Device> reactionElements = new HashSet<Device>();
+		Set<Device> allElements = new HashSet<Device>();
+
+		int triggerCounter = 0;
+		int reactionCounter = 0;
+		int allCounter = 0;
+		LOGGER.warn("Devices: " + this.deviceAPI.getDevices());
+
+		for (final Device device : this.deviceAPI.getDevices()) {
+			LOGGER.debug(device.getProfileIdentifier());
+			LOGGER.warn(device.getProfileIdentifier());
+
+			for (int i = 0; i < all.length; i++) {
+				if (device.getProfileIdentifier().equals("http://iolite.de#" + all[i])) {
+					allElements.add(device);
+					allCounter++;
+					for (int y = 0; i < trigger.length; y++) {
+						triggerCounter++;
+						triggerElements.add(device);
+					}
+					for (int y = 0; i < reaction.length; y++) {
+						reactionCounter++;
+						reactionElements.add(device);
+					}
+				}
+			}
+		}
+		LOGGER.debug("Number of trigger elements: " + triggerCounter);
+		LOGGER.debug("Number of reaction elements: " + reactionCounter);
+		LOGGER.debug("Number of relevant elements: " + allCounter);
+		LOGGER.warn("Number of trigger elements: " + triggerCounter);
+		LOGGER.warn("Number of reaction elements: " + reactionCounter);
+		LOGGER.warn("Number of relevant elements: " + allCounter);
+
+		if (triggerElements.isEmpty())
+			LOGGER.warn("No trigger element found");
+		if (reactionElements.isEmpty())
+			LOGGER.warn("No reaction element found");
+		if (allElements.isEmpty())
+			LOGGER.warn("Element found");
+
+		sensorReadingRoutine = new SensorReadingRoutine(triggerElements, reactionElements, allElements);
+
+		LOGGER.debug("Devices initialized");
+	}
+
+	private void startSensorReadingRoutine() {
+		LOGGER.debug("Start sensor reading routine");
+		Thread temperaturetThread = new Thread(sensorReadingRoutine);
+		temperaturetThread.start();
 	}
 
 }

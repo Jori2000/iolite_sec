@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.iolite.app</groupId>
-	<artifactId>example-app</artifactId>
+	<artifactId>secapp</artifactId>
 	<version>0.1-SNAPSHOT</version>
 
-	<name>IOLITE Example App</name>
-	<description>IOLITE Example App for testing purpose.</description>
+	<name>IOLITE Security App</name>
+	<description>IOLITE Security App.</description>
 
 	<packaging>jar</packaging>
-	<inceptionYear>2016</inceptionYear>
+	<inceptionYear>2018</inceptionYear>
 
 	<properties>
 		<frontend.plugin.version>0.0.26</frontend.plugin.version>

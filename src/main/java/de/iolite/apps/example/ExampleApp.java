@@ -46,7 +46,7 @@ import de.iolite.app.api.frontend.util.FrontendAPIUtility;
 import de.iolite.app.api.storage.StorageAPI;
 import de.iolite.app.api.storage.StorageAPIException;
 import de.iolite.app.api.user.access.UserAPI;
-import de.iolite.apps.example.internals.PageWithEmbeddedSessionTokenRequestHandler;
+import de.iolite.apps.secapp.internals.PageWithEmbeddedSessionTokenRequestHandler;
 import de.iolite.common.lifecycle.exception.CleanUpFailedException;
 import de.iolite.common.lifecycle.exception.InitializeFailedException;
 import de.iolite.common.lifecycle.exception.StartFailedException;

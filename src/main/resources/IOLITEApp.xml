@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns2:iolite-app-configuration
 	xmlns:ns2="www.iolite.de/iolite-app-configuration"
-	name="Home Security"
-	className="de.iolite.apps.secapp.main.SecApp">
+	name="Security App"
+	className="de.iolite.apps.secapp.SecApp">
 
 	<api-permission name="de.iolite.app.api.frontend.FrontendAPI" type="READ_WRITE"/>
 	<api-permission name="de.iolite.app.api.storage.StorageAPI" type="READ_WRITE"/>
