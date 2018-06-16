@@ -36,7 +36,7 @@ public class SensorReadingRoutine implements Runnable {
 			Thread currentThread = Thread.currentThread();
 			while (currentThread.isAlive()) {
 				if (!allElements.isEmpty())
-					LOGGER.debug("Current humidity level: " + checkForTrigger());
+					LOGGER.debug("check if something was triggered: " + checkForTrigger());
 				currentThread.sleep(30000);
 			}
 		} catch (Exception e) {
@@ -48,10 +48,52 @@ public class SensorReadingRoutine implements Runnable {
 		String[] all = { "AlarmSiren", "AlarmSystem", "Blind", "Camera", "carbonDioxideSensor", "ContactSensor",
 				"DimmableLamp", "Door", "Doorbell", "HSVLamp", "Lamp", "LuminanceSensor", "MovementSensor", "Socket",
 				"Sunblind", "VibrationSensor", "MediaPlayerDevice", "TV" };
-		String[] trigger = { "AlarmSystem", "Camera", "carbonDioxideSensor", "ContactSensor", "Door", "LuminanceSensor",
-				"Doorbell", "MovementSensor", "VibrationSensor" };
+		String[] trigger = { "Camera", "carbonDioxideSensor", "ContactSensor", "Door", "LuminanceSensor", "Doorbell",
+				"MovementSensor", "VibrationSensor" };
 		String[] reaction = { "AlarmSiren", "Blind", "Camera", "DimmableLamp", "HSVLamp", "Lamp", "Socket", "Sunblind",
 				"MediaPlayerDevice", "TV" };
+
+		for (Device module : triggerElements) {
+			switch (module.getIdentifier()) {
+			case "Camera":
+				// This has to be done manually
+				if (false)
+					Storage.addEvent(module);
+				break;
+			case "carbonDioxideSensor":
+				// This has to be done manually
+				if (false)
+					Storage.addEvent(module);
+				break;
+			case "ContactSensor":
+				if (module.getProperty("http://iolite.de#contactDetected").getValue().toString() == "false")
+					Storage.addEvent(module);
+				break;
+			case "Door":
+				if (module.getProperty("http://iolite.de#open").getValue().toString() == "true")
+					Storage.addEvent(module);
+				break;
+			case "LuminanceSensor":
+				// This has to be done manually
+				if (false)
+					Storage.addEvent(module);
+				break;
+			case "Doorbell":
+				if (module.getProperty("http://iolite.de#ringing").getValue().toString() == "true")
+					Storage.addEvent(module);
+				break;
+			case "MovementSensor":
+				if (module.getProperty("http://iolite.de#movementDetected").getValue().toString() == "true")
+					Storage.addEvent(module);
+				break;
+			case "VibrationSensor":
+				if (module.getProperty("http://iolite.de#vibrationDetected").getValue().toString() == "true")
+					Storage.addEvent(module);
+				break;
+			}
+		}
+		;
+
 		return 0;
 
 		// if finds something

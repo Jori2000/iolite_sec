@@ -109,6 +109,14 @@ public class SecApp extends AbstractIOLITEApp {
 		// index page
 		final IOLITEHTTPRequestHandler indexPageRequestHandler = new PageWithEmbeddedSessionTokenRequestHandler(
 				loadTemplate("assets/index.html"));
+
+		/*
+		 * 
+		 * To transmit Devices directly
+		 * 
+		 */
+		// this.frontendAPI.registerRequestHandler("devices", new
+		// DevicesResponseHandler());
 		this.frontendAPI.registerRequestHandler("", indexPageRequestHandler);
 		this.frontendAPI.registerRequestHandler("index.html", indexPageRequestHandler);
 	}
@@ -141,8 +149,8 @@ public class SecApp extends AbstractIOLITEApp {
 		int reactionCounter = 0;
 		int allCounter = 0;
 		LOGGER.warn("Devices: " + this.deviceAPI.getDevices());
-
 		for (final Device device : this.deviceAPI.getDevices()) {
+
 			LOGGER.debug("checking if " + device.getProfileIdentifier() + " is relevant");
 			LOGGER.warn("checking if " + device.getProfileIdentifier() + " is relevant");
 
