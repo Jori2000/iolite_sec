@@ -1,7 +1,6 @@
 package de.iolite.apps.secapp;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
@@ -12,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.iolite.app.api.device.access.Device;
+import de.iolite.apps.secapp.modes.Mode;
 
 /*
  * Has to be static so every class can fetch Infos from it
@@ -26,13 +26,16 @@ public class Storage {
 	private static Set<Device> reactionElements;
 	private static Set<Device> allElements;
 
+	private static ArrayList<Event> eventList = new ArrayList<Event>();
+
 	private final HashMap<String, LinkedList<Double>> classicModeConnections = new HashMap<String, LinkedList<Double>>();
-	private final static HashMap<Device, Timestamp> eventList = new HashMap<Device, Timestamp>();
+	private final static HashMap<String, Mode> customModes = new HashMap<String, Mode>();
 
 	public Storage(Set<Device> trigger, Set<Device> reaction, Set<Device> all) {
 		this.triggerElements = trigger;
 		this.reactionElements = reaction;
 		this.allElements = all;
+
 	}
 
 	public void addTriggerElements(Set<Device> values) {
@@ -49,9 +52,8 @@ public class Storage {
 	}
 
 	public static void addEvent(Device device) {
-		// maybe change type of timestamp to mil since epoch?!
-		Timestamp currentTimestamp = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
-		eventList.put(device, currentTimestamp);
+		Event event = new Event(device);
+		eventList.add(event);
 	}
 
 }
